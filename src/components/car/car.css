@@ -1,0 +1,28 @@
+.allCars{
+  padding: 0 40px;
+}
+
+.carConteiner{
+  overflow: hidden;
+  margin-top:20px;
+}
+.road{
+display: flex;
+border-bottom: dashed 1px black;
+}
+.general-buttons span{
+  color:black;
+  font-size: small;
+  font-weight: 600;
+}
+.general-buttons button{
+  background-color: #ebf0b7;
+  border: black solid 1px;
+}
+.flag img{
+  position: absolute;
+  right: 150px;
+  padding-top: 0px ;
+  width: 70px;
+}
+

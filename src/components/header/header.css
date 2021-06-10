@@ -1,0 +1,28 @@
+
+header{
+  width: 100vw;
+  background-color: #e0e79a;
+}
+header div{
+  display: flex;
+  justify-content:space-evenly;
+  align-items: center;
+  height: 64px;
+  width: 100vw;
+}
+header div a{
+  font-size: larger;
+  font-weight: 900;
+
+}
+header div a:any-link{
+  color: black;
+  text-decoration: none;
+}
+header button:hover{
+background-color: #f0f5b5;
+transition: 0.3s;
+}
+header button:not(:hover){
+  transition: 0.3s;
+  }
