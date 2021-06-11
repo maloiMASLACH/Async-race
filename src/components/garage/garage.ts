@@ -1,6 +1,6 @@
-import { renderCar,createCar,generateRandomCars} from '../car/car';
+import { renderCar,createCar,generateRandomCars,startEngine,drive} from '../car/car';
 import {Page} from '../templates/page'
-import {getCars,carsPage,deleteCar} from '../store/store'
+import {getCars,carsPage,deleteCar,updateCar,getCar} from '../store/store'
 import './garage.css'
 const garageURL ='http://127.0.0.1:4000/garage'
 interface Car{
@@ -41,12 +41,14 @@ export class Garage extends Page {
       this.generate100()
       this.changePage()
       this.removeCar()
+      this.recreateCar();
+      this.initRace();
     })
 
   }
 
    addForm():void{
-      fetch('').then(()=>{
+      getCars('').then(()=>{
       this.conteiner.innerHTML=`
       <h3>Garage (${localStorage['count']})</h3>
       <h4>Page ${localStorage['page']}</h4>
@@ -57,12 +59,12 @@ export class Garage extends Page {
     <form class="add-form" id="form1">
        <input type="text"id="nameAddID">
        <input type="color"id="colorAddID">
-       <button type"button">Create</button>
+       <button type="submit">Create</button>
      </form>
      <form class="update-form" id="form2">
-       <input type="text">
-       <input type="color">
-       <button type"button">Update</button>
+       <input type="text"id="nameUpdateID">
+       <input type="color"id="colorUpdateID">
+       <button>Update</button>
        </form>
        <div class="common-btns">
           <button class="race">Race</button>
@@ -93,7 +95,6 @@ export class Garage extends Page {
          formToCreateCar.reset();
        })
      }
-
     })
     }
 
@@ -108,19 +109,70 @@ export class Garage extends Page {
       })
     }
 
+    recreateCar(){
+      document.querySelectorAll('.select-button').forEach((selectBTN)=>{
+        selectBTN.addEventListener('click',()=>{
+         (<HTMLInputElement>document.getElementById('nameUpdateID')).placeholder="Enter new"
+          document.querySelector('.update-form button')?.addEventListener('click',()=>{
+            let voidCar={
+              name: (<HTMLInputElement>document.getElementById('nameUpdateID')).value,
+              color: (<HTMLInputElement>document.getElementById('colorUpdateID')).value
+            }
+            updateCar(selectBTN.id.split('-').slice(length-1).join(),voidCar)
+            .then(()=>{
+              this.addForm();
+            })
+          })
+        })
+      })
+    }
+
     generate100(){
       document.querySelector(".generate")?.addEventListener("click",()=>{
-        console.log('qq')
        generateRandomCars().forEach((car)=>{
          let body:object={
            name:car.name,
-           color:car.color
+           color:car.color,
          }
          createCar(body)
        })
        this.addForm();
       })
 
+    }
+
+    initRace(){
+      document.querySelectorAll('.start-engine-button').forEach((a)=>{
+        a.addEventListener('click',()=>{
+          let carId=a.id.split('-').slice(length-1).join('')
+          startEngine(carId)
+          .then((sp)=>{
+            getCar(carId)
+            .then((item)=>{
+              item.isEngineStarted=true
+             /* console.log(item)
+              const carCon=document.querySelector('.allCars')
+              let allCar= document.querySelectorAll('.carConteiner')
+              allCar[+carId%7-1].remove();
+              allCar[+carId%7-1].innerHTML=renderCar(item)
+              renderCar(item)*/
+            })
+            .then(()=>{
+              drive(carId)
+              .then((res)=>{
+                console.log(res)
+              })
+            })
+
+           /* getCar(carId)
+            .then((item)=>{
+              console.log(item)
+              item.isEngineStarted=true
+              console.log(item)
+            })*/
+          })
+        })
+      })
     }
 
     changePage(){
@@ -144,7 +196,6 @@ export class Garage extends Page {
      const title=this.createHeader(/*Garage.TextObg.MainTitle*/'')
      this.conteiner.append(title)
      this.addForm()
-   //  this.crateGarage();
      return this.conteiner
    }
 

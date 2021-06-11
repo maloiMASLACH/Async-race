@@ -6,21 +6,25 @@ const db = {
             "name": "Tesla",
             "color": "#e6e6fa",
             "id": 1,
+            "isEngineStarted": false
         },
         {
             "name": "BMW",
             "color": "#fede00",
             "id": 2,
+            "isEngineStarted": false
         },
         {
             "name": "Mersedes",
             "color": "#6c779f",
             "id": 3,
+            "isEngineStarted": false
         },
         {
             "name": "Ford",
             "color": "#ef3c40",
             "id": 4,
+            "isEngineStarted": false
         },
     ],
     winners: [

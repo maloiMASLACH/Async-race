@@ -30,9 +30,20 @@ export const getCars = async (page:string, limit=7)=>{
   };
 }
 
+export const getCar = async (id:string) => (await fetch(`${garage}/${id}`)).json();
+
 export const carsPage = async () =>{
   return ((await getCars('')).count)
 }
 
+
 export const deleteCar = async (id:string) => (await fetch(`${garage}/${id}`,{method: 'DELETE'})).json();
+
+export const updateCar = async (id:string,body:Object) => (await fetch(`${garage}/${id}`,{
+  method: 'PUT',
+  body: JSON.stringify(body),
+  headers:{
+    'Content-Type':'application/json'
+  }
+})).json();
 

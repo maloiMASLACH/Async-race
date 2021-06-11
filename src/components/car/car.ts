@@ -100,3 +100,13 @@ const generateRandomColor=()=>{
 }
 
 export const generateRandomCars =(count = 100)=> new Array(count).fill(1).map(_=> ({name:getRandomNames(),color:generateRandomColor()}))
+
+
+export const startEngine = async (id:string) =>(await fetch(`http://127.0.0.1:4000/engine?id=${id}&status=started`)).json();
+
+export const stopEngine = async (id:string) => (await fetch(`http://127.0.0.1:4000/engine?id=${id}&status=stopped`)).json();
+
+export const drive = async (id:string) => {
+  const res =await fetch(`http://127.0.0.1:4000/engine?id=${id}&status=drive`).catch();
+  return res.status !== 200 ? {success: false} : {...(await res.json())};
+};
