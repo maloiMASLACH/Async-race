@@ -6,10 +6,10 @@ export class CrateCar extends BaseComponent {
     super('main', ['create-car']);
   }
 
-  initForm=()=>{
+  initForm = () => {
     const main = document.querySelector('main');
-    if(main)
-      main.innerHTML=`
+    if (main) {
+      main.innerHTML = `
       <form class="add-form" id="form1">
         <input type="text">
         <input type="color">
@@ -21,8 +21,7 @@ export class CrateCar extends BaseComponent {
         <button type"button">Update</button>
         </form>
 
-      `
-
-  }
-
+      `;
+    }
+  };
 }

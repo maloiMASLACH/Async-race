@@ -1,18 +1,18 @@
 import './style.css';
 import { App } from './app';
-//import {render/*, listen, updateStateGarage*/} from  './components/ui/ui'
+// import {render/*, listen, updateStateGarage*/} from  './components/ui/ui'
 
-//render();
-/*await updateStateGarage();
-listen();*/
+// render();
+/* await updateStateGarage();
+listen(); */
 
-/*const jsonServer = require('json-server');
-const server = jsonServer.create();*/
-  new App().start()
+/* const jsonServer = require('json-server');
+const server = jsonServer.create(); */
+new App().start();
 
- /* server.get('/garage',()=>{
+/* server.get('/garage',()=>{
     console.log(server)
-  })*/
+  }) */
 /*  const app= new App()
   app.start()
   document.querySelector('.garage-head')?.addEventListener('click',()=>{
@@ -31,4 +31,4 @@ const server = jsonServer.create();*/
   window.document.querySelector('.winners-head')?.addEventListener('click',()=>{
   console.log('dd')
   new App().score();
-})*/
+}) */

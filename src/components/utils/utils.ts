@@ -1,4 +1,4 @@
-/*import store from '../store/store'
+/* import store from '../store/store'
 
 function getPositionCenter(e) {
   const {top, left, width, height} =e.getBoundingClientReact();
