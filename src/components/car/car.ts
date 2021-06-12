@@ -36,8 +36,8 @@ export const renderCar = (car:Car) => `
         ${renderCarImage(car.color)}
       </div>
     </div>
-    <div class="flag" id="flag-${car.id}">
-      <img src="https://image.flaticon.com/icons/png/512/2164/2164598.png">
+    <div class="flag" >
+      <img src="https://image.flaticon.com/icons/png/512/2164/2164598.png" id="flag-${car.id}">
     </div>
   </div>
   </div>

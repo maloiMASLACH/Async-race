@@ -7,7 +7,7 @@ import {
 } from '../car/car';
 import { Page } from '../templates/page';
 import {
-  getCars, deleteCar, updateCar, getCar,
+  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements,animation
 } from '../store/store';
 import './garage.css';
 
@@ -17,6 +17,7 @@ interface Car{
   name:string,
   color:string,
   isEngineStarted:boolean
+  speed:number
 }
 let cars:Car[] = [];
 
@@ -44,6 +45,7 @@ export class Garage extends Page {
       this.removeCar();
       this.recreateCar();
       this.initRace();
+      this.startRaceAll();
     });
   }
 
@@ -149,28 +151,49 @@ export class Garage extends Page {
             getCar(carId)
               .then((item) => {
                 item.isEngineStarted = true;
-                /* console.log(item)
-              const carCon=document.querySelector('.allCars')
-              let allCar= document.querySelectorAll('.carConteiner')
-              allCar[+carId%7-1].remove();
-              allCar[+carId%7-1].innerHTML=renderCar(item)
-              renderCar(item) */
               })
               .then(() => {
-                drive(carId)
+                getCar(carId).then((car)=>{
+                  const distance = getDistanceBetweenELements(document.getElementById(`car-${carId}`), document.getElementById(`flag-${carId}`));
+                    animation(document.getElementById(`car-${carId}`), distance, `${500000 / sp.velocity}`);
+                    drive(carId)
                   .then((res) => {
                     console.log(res);
                   });
+                  });
+                });
               });
-
-            /* getCar(carId)
-            .then((item)=>{
-              console.log(item)
-              item.isEngineStarted=true
-              console.log(item)
-            }) */
           });
       });
+  };
+
+  startRaceAll = () => {
+    document.querySelector('.race')?.addEventListener('click', () => {
+      getCars('').then((mas) => {
+        const carsRace = mas.items;
+        const distance = getDistanceBetweenELements(document.querySelector(`.car`), document.querySelector(`.flag img`));
+        carsRace.forEach((car:Car)=> {
+          startEngine(`${car.id}`)
+            .then((speed) => {
+              getCar(`${car.id}`).then(()=>{
+                car.isEngineStarted = true;
+              })
+              .then(()=>{
+                car.speed = speed.velocity
+              })
+              .then(()=>{
+                console.log(car)
+                drive(`${car.id}`)
+                .then(()=>{
+                  animation(document.getElementById(`car-${car.id}`), distance, `${500000 / car.speed}`);
+                })
+
+              })
+
+            });
+        });
+      })
+
     });
   };
 
@@ -197,3 +220,12 @@ export class Garage extends Page {
     return this.conteiner;
   }
 }
+
+/* .then(() => {
+        const distance = getDistanceBetweenELements(document.querySelector(`.car`), document.querySelector(`.flag img`));
+        cars.forEach((car) => {
+          console.log(car)
+          animation(document.getElementById(`car-${car.id}`), distance, `${500000 / car.speed}`);
+          drive(`${car.id}`);
+       })
+      }) */

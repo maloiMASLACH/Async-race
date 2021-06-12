@@ -43,3 +43,42 @@ export const updateCar = async (id:string, body:Object) => (await fetch(`${garag
     'Content-Type': 'application/json',
   },
 })).json();
+
+function getPositionCenter(e:any) {
+  const { top, left, width, height } = e.getBoundingClientRect();
+  return {
+    x: left + width / 2,
+    y: top + height / 2,
+  };
+}
+export function getDistanceBetweenELements(a:any, b:any) {
+  const positionA = getPositionCenter(a);
+  console.log(positionA);
+  const positionB = getPositionCenter(b);
+  console.log(positionB);
+  return Math.hypot(positionA.x - positionB.x);
+}
+
+export function animation(car:any, distance:any,animmationTime:any) {
+  let start:any = null;
+  const state:any = {};
+
+  function step(timestamp:any) {
+    if (!start) {
+      start = timestamp;
+    }
+    const time = timestamp - start;
+    const passed = Math.round(time * (distance / animmationTime));
+    console.log(start);
+
+    car.style.transform = `translateX(${Math.min(passed, distance)}px)`;
+
+    if (passed < distance) {
+      state.id = window.requestAnimationFrame(step);
+    }
+  }
+  state.id = window.requestAnimationFrame(step);
+
+  return state;
+}
+
