@@ -173,7 +173,6 @@ export class Garage extends Page {
 
   startRaceAll = () => {
     document.querySelector('.race')?.addEventListener('click', () => {
-
       const carsRace:any = [];
       getCars(`${localStorage.page}`).then((mas) => {
         carsRace.push(...mas.items);
