@@ -1,7 +1,7 @@
 import { renderCar, renderWinnerCar } from '../car/car';
 import { Page } from '../templates/page';
 
-const garageURL = 'http://127.0.0.1:4000/winners';
+const garageURL = 'http://127.0.0.1:3000/winners';
 interface WinnerCar{
   id:number,
   name:string,

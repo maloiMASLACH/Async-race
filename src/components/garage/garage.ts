@@ -4,14 +4,16 @@ import {
   generateRandomCars,
   startEngine,
   drive,
+  saveWinner,
+  deleteWinner,
 } from '../car/car';
 import { Page } from '../templates/page';
 import {
-  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements,animation
+  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements, animation, stopAnimation,
 } from '../store/store';
 import './garage.css';
 
-const garageURL = 'http://127.0.0.1:4000/garage';
+const garageURL = 'http://127.0.0.1:3000/garage';
 interface Car{
   id:number,
   name:string,
@@ -46,6 +48,7 @@ export class Garage extends Page {
       this.recreateCar();
       this.initRace();
       this.startRaceAll();
+      this.reset();
     });
   }
 
@@ -102,6 +105,7 @@ export class Garage extends Page {
   removeCar() {
     document.querySelectorAll('.remove-button').forEach((removeBTN) => {
       removeBTN.addEventListener('click', () => {
+        deleteWinner(removeBTN.id.split('-').slice(-1).join());
         deleteCar(removeBTN.id.split('-').slice(-1).join())
           .then(() => {
             this.addForm();
@@ -153,47 +157,57 @@ export class Garage extends Page {
                 item.isEngineStarted = true;
               })
               .then(() => {
-                getCar(carId).then((car)=>{
+                getCar(carId).then((car) => {
                   const distance = getDistanceBetweenELements(document.getElementById(`car-${carId}`), document.getElementById(`flag-${carId}`));
-                    animation(document.getElementById(`car-${carId}`), distance, `${500000 / sp.velocity}`);
-                    drive(carId)
-                  .then((res) => {
-                    console.log(res);
-                  });
-                  });
+                  animation(document.getElementById(`car-${carId}`), distance, `${500000 / sp.velocity}`);
+                  drive(carId)
+                    .then((res) => {
+                      console.log(res);
+                    });
                 });
               });
           });
       });
+    });
   };
 
   startRaceAll = () => {
     document.querySelector('.race')?.addEventListener('click', () => {
-      getCars('').then((mas) => {
-        const carsRace = mas.items;
-        const distance = getDistanceBetweenELements(document.querySelector(`.car`), document.querySelector(`.flag img`));
-        carsRace.forEach((car:Car)=> {
+
+      const carsRace:any = [];
+      getCars(`${localStorage.page}`).then((mas) => {
+        carsRace.push(...mas.items);
+        const distance = getDistanceBetweenELements(document.querySelector('.car'), document.querySelector('.flag img'));
+        carsRace.forEach((car:Car) => {
+          const startTime = new Date().getTime();
           startEngine(`${car.id}`)
             .then((speed) => {
-              getCar(`${car.id}`).then(()=>{
+              getCar(`${car.id}`).then(() => {
                 car.isEngineStarted = true;
               })
-              .then(()=>{
-                car.speed = speed.velocity
-              })
-              .then(()=>{
-                console.log(car)
-                drive(`${car.id}`)
-                .then(()=>{
-                  animation(document.getElementById(`car-${car.id}`), distance, `${500000 / car.speed}`);
+                .then(() => {
+                  car.speed = speed.velocity;
                 })
-
-              })
-
+                .then(() => {
+                  drive(`${car.id}`)
+                    .then((res) => {
+                      if (res.success === false) {
+                        stopAnimation(document.getElementById(`car-${car.id}`));
+                        sessionStorage.setItem(`500-${car.id}`, `${res.success}`);
+                        return;
+                      }
+                      if (!sessionStorage.winner) {
+                        sessionStorage.setItem('winner', `${car.name}`);
+                        alert(sessionStorage.winner);
+                        saveWinner(`${car.id}`, `${Math.round((new Date().getTime() - startTime) / 1000)}`);
+                      }
+                    });
+                  animation(document.getElementById(`car-${car.id}`), distance, `${500000 / car.speed}`);
+                });
             });
         });
-      })
-
+        sessionStorage.clear();
+      });
     });
   };
 
@@ -213,6 +227,12 @@ export class Garage extends Page {
     });
   }
 
+  reset() {
+    document.querySelector('button.reset')?.addEventListener('click', () => {
+      this.addForm();
+    });
+  }
+
   render() {
     const title = this.createHeader(/* Garage.TextObg.MainTitle */'');
     this.conteiner.append(title);
@@ -220,12 +240,3 @@ export class Garage extends Page {
     return this.conteiner;
   }
 }
-
-/* .then(() => {
-        const distance = getDistanceBetweenELements(document.querySelector(`.car`), document.querySelector(`.flag img`));
-        cars.forEach((car) => {
-          console.log(car)
-          animation(document.getElementById(`car-${car.id}`), distance, `${500000 / car.speed}`);
-          drive(`${car.id}`);
-       })
-      }) */

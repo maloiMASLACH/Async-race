@@ -1,6 +1,7 @@
 import './car.css';
 
-const garageURL = 'http://127.0.0.1:4000/garage';
+const garageURL = 'http://127.0.0.1:3000/garage';
+const winnersURL = 'http://127.0.0.1:3000/winners';
 
 interface Car{
   id:number,
@@ -49,6 +50,46 @@ export const createCar = async (body:object) => (await fetch(garageURL, {
     'Content-Type': 'application/json',
   },
 })).json();
+
+export const getWinner = async (id:string) => (await fetch(`${winnersURL}/${id}`)).json();
+
+export const getWinnerStatus = async (id:string) => (await fetch(`${winnersURL}/${id}`)).status;
+
+export const deleteWinner = async (id:string) => (await fetch(`${winnersURL}/${id}`, { method: 'DELETE' })).json();
+
+export const createWinner = async (body:Object) => (await fetch(winnersURL, {
+  method: 'POST',
+  body: JSON.stringify(body),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})).json();
+
+export const updateWinner = async (id:string, body:Object) => (await fetch(`${winnersURL}/${id}`, {
+  method: 'PUT',
+  body: JSON.stringify(body),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})).json();
+
+export const saveWinner = async (id:string, time:string) => {
+  const winnerStatus = await getWinnerStatus(id);
+  if (winnerStatus === 404) {
+    await createWinner({
+      id,
+      wins: 1,
+      time,
+    });
+  } else {
+    const winner = await getWinner(id);
+    await updateWinner(id, {
+      id,
+      wins: winner.wins + 1,
+      time: time < winner.time ? time : winner.time,
+    });
+  }
+};
 
 export const renderWinnerCar = (car:WinnerCar) => {
   const carCon = `
@@ -102,11 +143,11 @@ const generateRandomColor = () => {
 
 export const generateRandomCars = (count = 100) => new Array(count).fill(1).map((_) => ({ name: getRandomNames(), color: generateRandomColor() }));
 
-export const startEngine = async (id:string) => (await fetch(`http://127.0.0.1:4000/engine?id=${id}&status=started`)).json();
+export const startEngine = async (id:string) => (await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=started`)).json();
 
-export const stopEngine = async (id:string) => (await fetch(`http://127.0.0.1:4000/engine?id=${id}&status=stopped`)).json();
+export const stopEngine = async (id:string) => (await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=stopped`)).json();
 
 export const drive = async (id:string) => {
-  const res = await fetch(`http://127.0.0.1:4000/engine?id=${id}&status=drive`).catch();
+  const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=drive`).catch();
   return res.status !== 200 ? { success: false } : { ...(await res.json()) };
 };

@@ -1,22 +1,4 @@
-/* import {getCars, getWinners} from '../api/api'
-
-const {items:cars,count:carsCount} = await getCars('1');
-const {items:winners,count:winnersCount} = await getWinners('1',10,'null','null');
-
-export default{
-  carsPage:1,
-  cars,
-  carsCount,
-  winnesPage:1,
-  winners,
-  winnersCount,
-  animation: {},
-  view: 'garage',
-  sortBy: null,
-  sortOrder:null,
-}; */
-
-const base = 'http://127.0.0.1:4000';
+const base = 'http://127.0.0.1:3000';
 
 const garage = `${base}/garage`;
 
@@ -45,7 +27,9 @@ export const updateCar = async (id:string, body:Object) => (await fetch(`${garag
 })).json();
 
 function getPositionCenter(e:any) {
-  const { top, left, width, height } = e.getBoundingClientRect();
+  const {
+    top, left, width, height,
+  } = e.getBoundingClientRect();
   return {
     x: left + width / 2,
     y: top + height / 2,
@@ -53,13 +37,11 @@ function getPositionCenter(e:any) {
 }
 export function getDistanceBetweenELements(a:any, b:any) {
   const positionA = getPositionCenter(a);
-  console.log(positionA);
   const positionB = getPositionCenter(b);
-  console.log(positionB);
   return Math.hypot(positionA.x - positionB.x);
 }
 
-export function animation(car:any, distance:any,animmationTime:any) {
+export function animation(car:any, distance:any, animmationTime:any) {
   let start:any = null;
   const state:any = {};
 
@@ -69,16 +51,21 @@ export function animation(car:any, distance:any,animmationTime:any) {
     }
     const time = timestamp - start;
     const passed = Math.round(time * (distance / animmationTime));
-    console.log(start);
 
     car.style.transform = `translateX(${Math.min(passed, distance)}px)`;
 
-    if (passed < distance) {
+    if (sessionStorage[`500-${car.id}`] !== 'false') {
       state.id = window.requestAnimationFrame(step);
     }
   }
+
   state.id = window.requestAnimationFrame(step);
 
-  return state;
+  return false;
 }
 
+export function stopAnimation(car: any) {
+  console.log(car);
+
+  console.log(car);
+}
