@@ -25,4 +25,18 @@ border-bottom: dashed 1px black;
   padding-top: 30px ;
   width: 40px;
 }
+.carConteinerWinner{
+  padding-left: 0%;
+  display: flex;
+  justify-content: space-around;
+}
+.carConteinerWinner span{
+  width: 45%;
+}
+.carConteinerWinner span.car-name{
+  margin-left: 10%;
+}
+.carConteinerWinner .carWinner{
+  margin-right: 0%;
+}
 

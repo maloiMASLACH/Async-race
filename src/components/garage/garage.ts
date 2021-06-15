@@ -4,12 +4,11 @@ import {
   generateRandomCars,
   startEngine,
   drive,
-  saveWinner,
-  deleteWinner,
 } from '../car/car';
 import { Page } from '../templates/page';
 import {
-  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements, animation, stopAnimation,
+  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements, animation, stopAnimation, saveWinner, deleteWinner,
+
 } from '../store/store';
 import './garage.css';
 

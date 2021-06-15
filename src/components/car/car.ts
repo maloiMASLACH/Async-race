@@ -51,74 +51,18 @@ export const createCar = async (body:object) => (await fetch(garageURL, {
   },
 })).json();
 
-export const getWinner = async (id:string) => (await fetch(`${winnersURL}/${id}`)).json();
 
-export const getWinnerStatus = async (id:string) => (await fetch(`${winnersURL}/${id}`)).status;
-
-export const deleteWinner = async (id:string) => (await fetch(`${winnersURL}/${id}`, { method: 'DELETE' })).json();
-
-export const createWinner = async (body:Object) => (await fetch(winnersURL, {
-  method: 'POST',
-  body: JSON.stringify(body),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})).json();
-
-export const updateWinner = async (id:string, body:Object) => (await fetch(`${winnersURL}/${id}`, {
-  method: 'PUT',
-  body: JSON.stringify(body),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})).json();
-
-export const saveWinner = async (id:string, time:string) => {
-  const winnerStatus = await getWinnerStatus(id);
-  if (winnerStatus === 404) {
-    await createWinner({
-      id,
-      wins: 1,
-      time,
-    });
-  } else {
-    const winner = await getWinner(id);
-    await updateWinner(id, {
-      id,
-      wins: winner.wins + 1,
-      time: time < winner.time ? time : winner.time,
-    });
-  }
-};
 
 export const renderWinnerCar = (car:WinnerCar) => {
   const carCon = `
-  <div class=carConteiner>
-  <div class="general-buttons">
-    <button class="button select-button" id="select-car-${car.id}">Select</button>
-    <button class="button remove-button" id="remove-car-${car.id}">Remove</button>
-    <span class="car-name">${car.name = `${
-    fetch('http://127.0.0.1:4000/garage').then((e) => e.json()).then((json) => {
-      console.log(typeof json);
-      console.log(json[car.id].name);
-      console.log(JSON.stringify(json[car.id].name));
-      return JSON.stringify(json[car.id].name);
-    })}`}${console.log(car.name)}</span>
-  </div>
-  <div class="road">
-    <div class="launch-pad">
-      <div class="control-panel">
-        <button class="icon start-engine-button" id="start-engine-car-${car.id}" }>A</button>
-        <button class="icon stop-engine-button" id="stop-engine-car-${car.id}" >B</button>
-      </div>
-      <div class="car" id="car-${car.id}">
-        ${renderCarImage(car.color)}
-      </div>
+  <div class=carConteinerWinner>
+    <span class="car-name">${car.id}</span>
+    <div class="carWinner" id="car-${car.id}">
+     ${renderCarImage(car.color)}
     </div>
-    <div class="flag" id="flag-${car.id}">
-      <img src="https://image.flaticon.com/icons/png/512/2164/2164598.png">
-    </div>
-  </div>
+    <span class="car-name">${car.name}</span>
+    <span class="">${car.wins}</span>
+    <span class="">${car.time}</span>
   </div>
 `;
   return carCon;

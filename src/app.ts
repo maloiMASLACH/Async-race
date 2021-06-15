@@ -47,6 +47,7 @@ export class App {
     App.renderPage('garage');
     this.enableChange();
     if (localStorage.page === undefined) localStorage.setItem('page', '1');
+    if (localStorage.pageW === undefined) localStorage.setItem('pageW', '1');
   };
 
   score = () => {
