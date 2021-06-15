@@ -51,8 +51,6 @@ export const createCar = async (body:object) => (await fetch(garageURL, {
   },
 })).json();
 
-
-
 export const renderWinnerCar = (car:WinnerCar) => {
   const carCon = `
   <div class=carConteinerWinner>

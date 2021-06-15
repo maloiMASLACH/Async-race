@@ -1,7 +1,7 @@
-import { renderCar, renderWinnerCar} from '../car/car';
-import { getCar,getWinner,getWinners } from '../store/store';
+import { renderCar, renderWinnerCar } from '../car/car';
+import { getCar, getWinner, getWinners } from '../store/store';
 import { Page } from '../templates/page';
-import './winners.css'
+import './winners.css';
 
 const wiinerURL = 'http://127.0.0.1:3000/winners';
 interface WinnerCar{
@@ -11,26 +11,31 @@ interface WinnerCar{
   wins:number,
   time:number
 }
-let cars:any[] = [];
+interface Winner{
+  id:unknown,
+  name:unknown,
+  color:unknown,
+  wins:unknown,
+  time:unknown
+}
+let cars:WinnerCar[] = [];
 
 export class Winners extends Page {
   static TextObg = {
     MainTitle: 'Winners',
   };
 
-
   showWinners(page:string) {
-    getWinners(page).then((json)=>{
-      cars=[]
-      cars.push(...json.items)
-      console.log(cars)
-    }).then(()=>{
-      cars.forEach((car)=>{
-        this.conteiner.innerHTML += renderWinnerCar(car)
+    getWinners(page).then((json) => {
+      cars = [];
+      cars.push(...json.items);
+      console.log(...json.items);
+    }).then(() => {
+      cars.forEach((car) => {
+        this.conteiner.innerHTML += renderWinnerCar(car);
         this.changePage();
-      })
-    })
-
+      });
+    });
   }
 
   initWinners() {
@@ -50,14 +55,15 @@ export class Winners extends Page {
       <li>Time(s)</li>
       </ul>
     `;
-    }).then(() =>{
+    }).then(() => {
       const { pageW } = localStorage;
       this.showWinners(pageW);
     });
   }
+
   changePage() {
     document.getElementById('next')?.addEventListener('click', () => {
-      console.log('q')
+      console.log('q');
       if (+localStorage.pageW < +localStorage.maxPageW) {
         localStorage.setItem('pageW', `${+localStorage.pageW + 1}`);
         this.initWinners();
@@ -71,6 +77,7 @@ export class Winners extends Page {
       }
     });
   }
+
   render() {
     const title = this.createHeader('');
     this.conteiner.append(title);

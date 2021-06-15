@@ -157,12 +157,17 @@ export class Garage extends Page {
               })
               .then(() => {
                 getCar(carId).then((car) => {
-                  const distance = getDistanceBetweenELements(document.getElementById(`car-${carId}`), document.getElementById(`flag-${carId}`));
-                  animation(document.getElementById(`car-${carId}`), distance, `${500000 / sp.velocity}`);
-                  drive(carId)
-                    .then((res) => {
-                      console.log(res);
-                    });
+                  const carE:HTMLElement | null=document.getElementById(`car-${carId}`)
+                  const flag:HTMLElement | null=document.getElementById(`flag-${carId}`)
+                  if (carE && flag){
+                    const distance = getDistanceBetweenELements(carE, flag);
+                    animation(carE, distance, `${500000 / sp.velocity}`);
+                    drive(carId)
+                      .then((res) => {
+                        console.log(res);
+                      });
+                  }
+
                 });
               });
           });
@@ -172,39 +177,47 @@ export class Garage extends Page {
 
   startRaceAll = () => {
     document.querySelector('.race')?.addEventListener('click', () => {
-      const carsRace:any = [];
+      const carsRace:Car[] = [];
       getCars(`${localStorage.page}`).then((mas) => {
         carsRace.push(...mas.items);
-        const distance = getDistanceBetweenELements(document.querySelector('.car'), document.querySelector('.flag img'));
-        carsRace.forEach((car:Car) => {
-          const startTime = new Date().getTime();
-          startEngine(`${car.id}`)
-            .then((speed) => {
-              getCar(`${car.id}`).then(() => {
-                car.isEngineStarted = true;
-              })
-                .then(() => {
-                  car.speed = speed.velocity;
+
+          carsRace.forEach((car:Car) => {
+            const startTime = new Date().getTime();
+            startEngine(`${car.id}`)
+              .then((speed) => {
+                getCar(`${car.id}`).then(() => {
+                  car.isEngineStarted = true;
                 })
-                .then(() => {
-                  drive(`${car.id}`)
-                    .then((res) => {
-                      if (res.success === false) {
-                        stopAnimation(document.getElementById(`car-${car.id}`));
-                        sessionStorage.setItem(`500-${car.id}`, `${res.success}`);
-                        return;
-                      }
-                      if (!sessionStorage.winner) {
-                        sessionStorage.setItem('winner', `${car.name}`);
-                        alert(sessionStorage.winner);
-                        saveWinner(`${car.id}`, `${Math.round((new Date().getTime() - startTime) / 1000)}`);
-                      }
-                    });
-                  animation(document.getElementById(`car-${car.id}`), distance, `${500000 / car.speed}`);
-                });
-            });
-        });
-        sessionStorage.clear();
+                  .then(() => {
+                    car.speed = speed.velocity;
+                  })
+                  .then(() => {
+                    const carE:HTMLElement | null = document.getElementById(`car-${car.id}`)
+                     const flag:HTMLElement | null=document.querySelector('.flag img')
+                  if(carE && flag){
+                   const distance = getDistanceBetweenELements(carE,flag);
+                    drive(`${car.id}`)
+                      .then((res) => {
+                        if (res.success === false) {
+                        //  stopAnimation(document.getElementById(`car-${car.id}`));
+                          sessionStorage.setItem(`500-${car.id}`, `${res.success}`);
+                          return;
+                        }
+                        if (!sessionStorage.winner) {
+                          sessionStorage.setItem('winner', `${car.name}`);
+                          alert(sessionStorage.winner);
+                          saveWinner(`${car.id}`, `${Math.round((new Date().getTime() - startTime) / 1000)}`);
+                        }
+                      });
+                    animation(carE, distance, `${500000 / car.speed}`);
+                  }
+                  });
+              });
+          });
+          sessionStorage.clear();
+     // }
+
+
       });
     });
   };
