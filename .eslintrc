@@ -20,18 +20,8 @@
     "no-console": "warn",
     "max-len": ["warn", { "code": 120 }],
     "indent": ["warn", 2, {
-      "SwitchCase": 1,
+      "SwitchCase": 1
     }],
-    "@typescript-eslint/ban-types": ["error",
-      {
-          "types": {
-              "{}": false,
-              "Object": false,
-              "object": false
-          },
-          "extendDefaults": true
-      }
-  ],
     "@typescript-eslint/indent": ["warn", 2, {
       "SwitchCase": 1
     }],
