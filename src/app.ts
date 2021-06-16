@@ -1,4 +1,3 @@
-import { CrateCar } from './components/create-car/crate-car';
 import { Header, PageID } from './components/header/header';
 import { Garage } from './components/garage/garage';
 import { Winners } from './components/winners/winners';
@@ -46,11 +45,11 @@ export class App {
     App.contaiter.append(this.header.render());
     App.renderPage('garage');
     this.enableChange();
-    if (localStorage.page === undefined) localStorage.setItem('page', '1');
-    if (localStorage.pageW === undefined) localStorage.setItem('pageW', '1');
-  };
-
-  score = () => {
-
+    localStorage.setItem('page', '1');
+    localStorage.setItem('pageW', '1');
+    sessionStorage.setItem('nameAddID', '');
+    sessionStorage.setItem('colorAddID', '');
+    sessionStorage.setItem('nameUpdateID', '');
+    sessionStorage.setItem('colorUpdateID', '');
   };
 }

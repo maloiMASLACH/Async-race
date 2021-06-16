@@ -42,10 +42,11 @@ export const getWinners = async (page:string, limit = 10) => {
   localStorage.setItem('maxPageW', `${Math.ceil(localStorage.countW / 10)}`);
 
   return {
-    items: await Promise.all<WinnerCar>(items.map(async (winner:WinnerCar) =>
-      ({ ...winner,
-        name: await getCar(`${winner.id}`).then((e) => e.name),
-        color: await getCar(`${winner.id}`).then((e) => e.color) }))),
+    items: await Promise.all<WinnerCar>(items.map(async (winner:WinnerCar) => ({
+      ...winner,
+      name: await getCar(`${winner.id}`).then((e) => e.name),
+      color: await getCar(`${winner.id}`).then((e) => e.color),
+    }))),
     count: response.headers.get('X-Total-Count'),
   };
 };
@@ -107,32 +108,23 @@ export function getDistanceBetweenELements(a:HTMLElement, b:HTMLElement) {
 export function animation(car:HTMLElement, distance:number, animmationTime:string) {
   let start:number;
   const state = {
-    id:0
+    id: 0,
   };
 
   function step(timestamp:number) {
     if (!start) {
       start = timestamp;
-      console.log(typeof (start))
+      console.log(typeof (start));
     }
     const time = timestamp - start;
     const passed = Math.round(time * (distance / +animmationTime));
 
     car.style.transform = `translateX(${Math.min(passed, distance)}px)`;
 
-    if (sessionStorage[`500-${car.id}`] !== 'false') {
-      state.id = window.requestAnimationFrame(step);
-    }
+    state.id = window.requestAnimationFrame(step);
   }
 
   state.id = window.requestAnimationFrame(step);
-console.log(state)
+  console.log(state);
   return false;
 }
-
-export function stopAnimation(car: HTMLElement) {
-  console.log(car);
-
-  console.log(car);
-}
-

@@ -7,12 +7,11 @@ import {
 } from '../car/car';
 import { Page } from '../templates/page';
 import {
-  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements, animation, stopAnimation, saveWinner, deleteWinner,
+  getCars, deleteCar, updateCar, getCar, getDistanceBetweenELements, animation, saveWinner, deleteWinner,
 
 } from '../store/store';
 import './garage.css';
 
-const garageURL = 'http://127.0.0.1:3000/garage';
 interface Car{
   id:number,
   name:string,
@@ -48,6 +47,7 @@ export class Garage extends Page {
       this.initRace();
       this.startRaceAll();
       this.reset();
+      this.saveValues();
     });
   }
 
@@ -61,13 +61,13 @@ export class Garage extends Page {
       <div id="next">Next</div>
       </div>
     <form class="add-form" id="form1">
-       <input type="text"id="nameAddID">
-       <input type="color"id="colorAddID">
+       <input type="text"id="nameAddID" value="${sessionStorage.nameAddID}">
+       <input type="color"id="colorAddID" value="${sessionStorage.colorAddID}">
        <button type="submit">Create</button>
      </form>
      <form class="update-form" id="form2">
-       <input type="text"id="nameUpdateID">
-       <input type="color"id="colorUpdateID">
+       <input type="text"id="nameUpdateID" value="${sessionStorage.nameUpdateID}">
+       <input type="color"id="colorUpdateID" value="${sessionStorage.colorUpdateID}">
        <button>Update</button>
        </form>
        <div class="common-btns">
@@ -81,6 +81,21 @@ export class Garage extends Page {
       this.crateGarage(page);
     });
   }
+
+  saveValues = () => {
+    document.getElementById('nameAddID')?.addEventListener('change', () => {
+      sessionStorage.setItem('nameAddID', `${(<HTMLInputElement>document.getElementById('nameAddID')).value}`);
+    });
+    document.getElementById('colorAddID')?.addEventListener('change', () => {
+      sessionStorage.setItem('colorAddID', `${(<HTMLInputElement>document.getElementById('colorAddID')).value}`);
+    });
+    document.getElementById('nameUpdateID')?.addEventListener('change', () => {
+      sessionStorage.setItem('nameUpdateID', `${(<HTMLInputElement>document.getElementById('nameUpdateID')).value}`);
+    });
+    document.getElementById('colorUpdateID')?.addEventListener('change', () => {
+      sessionStorage.setItem('colorUpdateID', `${(<HTMLInputElement>document.getElementById('colorUpdateID')).value}`);
+    });
+  };
 
   addCar() {
     const formToCreateCar = <HTMLFormElement>document.querySelector('.add-form');
@@ -157,17 +172,19 @@ export class Garage extends Page {
               })
               .then(() => {
                 getCar(carId).then((car) => {
-                  const carE:HTMLElement | null=document.getElementById(`car-${carId}`)
-                  const flag:HTMLElement | null=document.getElementById(`flag-${carId}`)
-                  if (carE && flag){
+                  const carE:HTMLElement | null = document.getElementById(`car-${carId}`);
+                  const flag:HTMLElement | null = document.getElementById(`flag-${carId}`);
+                  const startPosition: HTMLElement | null = document.getElementById(`start-engine-car-${car.id}`);
+                  if (carE && flag && startPosition) {
                     const distance = getDistanceBetweenELements(carE, flag);
-                    animation(carE, distance, `${500000 / sp.velocity}`);
                     drive(carId)
                       .then((res) => {
-                        console.log(res);
+                        if (res.success === false) {
+                          animation(carE, getDistanceBetweenELements(carE, startPosition), '0');
+                        }
                       });
+                    animation(carE, distance, `${500000 / sp.velocity}`);
                   }
-
                 });
               });
           });
@@ -180,30 +197,28 @@ export class Garage extends Page {
       const carsRace:Car[] = [];
       getCars(`${localStorage.page}`).then((mas) => {
         carsRace.push(...mas.items);
-
-          carsRace.forEach((car:Car) => {
-            const startTime = new Date().getTime();
-            startEngine(`${car.id}`)
-              .then((speed) => {
-                getCar(`${car.id}`).then(() => {
-                  car.isEngineStarted = true;
+        carsRace.forEach((car:Car) => {
+          const startTime = new Date().getTime();
+          startEngine(`${car.id}`)
+            .then((speed) => {
+              getCar(`${car.id}`).then(() => {
+                car.isEngineStarted = true;
+              })
+                .then(() => {
+                  car.speed = speed.velocity;
                 })
-                  .then(() => {
-                    car.speed = speed.velocity;
-                  })
-                  .then(() => {
-                    const carE:HTMLElement | null = document.getElementById(`car-${car.id}`)
-                     const flag:HTMLElement | null=document.querySelector('.flag img')
-                  if(carE && flag){
-                   const distance = getDistanceBetweenELements(carE,flag);
+                .then(() => {
+                  const carE:HTMLElement | null = document.getElementById(`car-${car.id}`);
+                  const flag:HTMLElement | null = document.querySelector('.flag img');
+                  const startPosition: HTMLElement | null = document.getElementById(`start-engine-car-${car.id}`);
+                  if (carE && flag && startPosition) {
+                    const distance = getDistanceBetweenELements(carE, flag);
                     drive(`${car.id}`)
                       .then((res) => {
                         if (res.success === false) {
-                        //  stopAnimation(document.getElementById(`car-${car.id}`));
-                          sessionStorage.setItem(`500-${car.id}`, `${res.success}`);
-                          return;
+                          animation(carE, getDistanceBetweenELements(carE, startPosition), '0');
                         }
-                        if (!sessionStorage.winner) {
+                        if (!sessionStorage.winner && res.success === true) {
                           sessionStorage.setItem('winner', `${car.name}`);
                           alert(sessionStorage.winner);
                           saveWinner(`${car.id}`, `${Math.round((new Date().getTime() - startTime) / 1000)}`);
@@ -211,13 +226,10 @@ export class Garage extends Page {
                       });
                     animation(carE, distance, `${500000 / car.speed}`);
                   }
-                  });
-              });
-          });
+                });
+            });
           sessionStorage.clear();
-     // }
-
-
+        });
       });
     });
   };
@@ -245,7 +257,7 @@ export class Garage extends Page {
   }
 
   render() {
-    const title = this.createHeader(/* Garage.TextObg.MainTitle */'');
+    const title = this.createHeader('');
     this.conteiner.append(title);
     this.addForm();
     return this.conteiner;
