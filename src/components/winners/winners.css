@@ -1,9 +1,0 @@
-.winnersTable{
-  display: flex;
-  justify-content: space-around;
-  margin-left: 10%;
-  width: 80%;
-}
-.winnersTable li{
-  width:  35%;
-}

@@ -1,4 +1,8 @@
 import './style.css';
 import { App } from './app';
 
-new App().start();
+window.onload = () => {
+  const appElement = document.getElementById('app');
+  if (!appElement) throw Error('error');
+  new App(document.body);
+};
